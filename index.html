@@ -159,7 +159,7 @@
                 </div>
                 <div id="quizOptions"></div>
                 <div id="feedback" style="text-align:center; font-weight:bold; margin:15px; min-height:40px;"></div>
-                <button onclick="setupQuiz()" style="background:var(--border); color:var(--text);">דלג / הבא ➔</button>
+                <button onclick="setupQuiz()" style="background:var(--border); color:var(--text);">דלג / הבא �?/button>
             </div>
         </div>
 
@@ -178,7 +178,7 @@
                     </div>
                     <div id="addOptionsList" class="he-chips" style="margin:10px 0;"></div>
                     <input type="text" id="manualAddInput" placeholder="תרגום ידני..." onkeypress="if(event.key === 'Enter') confirmAdd()">
-                    <button class="secondary-btn" onclick="confirmAdd()">שמור למילון ✅</button>
+                    <button class="secondary-btn" onclick="confirmAdd()">שמור למילון �?/button>
                 </div>
             </div>
 
@@ -228,7 +228,7 @@
                     <input type="checkbox" id="autoSpeakToggle" onchange="saveSettings()">
                 </div>
                 <div class="setting-row">
-                    <label for="showSpeakerToggle">👁️ הצג רמקול להשמעה ידנית</label>
+                    <label for="showSpeakerToggle">👁�?הצג רמקול להשמעה ידנית</label>
                     <input type="checkbox" id="showSpeakerToggle" onchange="saveSettings()">
                 </div>
             </div>
@@ -250,7 +250,7 @@
                 <input type="file" id="fileIn" style="display:none" onchange="importDictionary(event)">
                 <hr style="margin:20px 0; border:0; border-top:1px solid var(--border);">
                 <button onclick="resetAllStats()" style="background:var(--warning); color:#333; margin-bottom:10px;">📊 איפוס סטטיסטיקת הצלחות</button>
-                <button onclick="clearAllData()" style="background:var(--error);">🗑️ מחיקת כל הנתונים</button>
+                <button onclick="clearAllData()" style="background:var(--error);">🗑�?מחיקת כל הנתונים</button>
             </div>
 
             <div class="card">
@@ -314,7 +314,7 @@
             <h3 style="margin-top:0;">בחירת סוג ייבוא</h3>
             <p>נמצא קובץ גיבוי. כיצד תרצה לטעון אותו?</p>
             <div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">
-                <button onclick="executeImport('merge')" style="background:var(--primary);">➕ מיזוג (הוספה לקיים)</button>
+                <button onclick="executeImport('merge')" style="background:var(--primary);">�?מיזוג (הוספה לקיים)</button>
                 <button onclick="executeImport('replace')" style="background:var(--error);">⚠️ החלפה (מחיקת הקיים)</button>
                 <button onclick="closeImportModal()" style="background:var(--border); color:var(--text);">ביטול</button>
             </div>
@@ -394,7 +394,7 @@
                 // המרת JSON מנקה אובייקטים בעייתיים לפני שליחה למסד נתונים
                 const cleanDb = JSON.parse(JSON.stringify(db));
                 await firestore.collection("users").doc(currentUser.uid).set(cleanDb);
-                console.log("Synced to Cloud ✓");
+                console.log("Synced to Cloud �?);
             } catch(e) {
                 console.error("Cloud Sync Error:", e);
             }
@@ -524,7 +524,7 @@
             reversedHist.forEach((item, index) => {
                 const realIndex = db.history.length - 1 - index; 
                 const displayIndex = realIndex + 1; 
-                tbody.innerHTML += `<tr><td style="color:#888;">${displayIndex}</td><td>${item.date}</td><td style="font-weight:bold; color:var(--primary);">${item.score}</td><td><button onclick="deleteHistoryItem(${realIndex})" style="background:none; border:none; color:var(--error); padding:0; margin:0; width:auto;">✖</button></td></tr>`;
+                tbody.innerHTML += `<tr><td style="color:#888;">${displayIndex}</td><td>${item.date}</td><td style="font-weight:bold; color:var(--primary);">${item.score}</td><td><button onclick="deleteHistoryItem(${realIndex})" style="background:none; border:none; color:var(--error); padding:0; margin:0; width:auto;">�?/button></td></tr>`;
             });
 
             // SVG Graph
@@ -599,13 +599,50 @@
         }
 
         async function fetchGoogle(word) {
-            try {
-                const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=iw&dt=t&dt=at&q=${encodeURIComponent(word.toLowerCase())}`).then(r => r.json());
-                let results = [res[0][0][0]];
-                if (res[5]) res[5][0][2].forEach(t => { if(!results.includes(t[0])) results.push(t[0]); });
-                return results;
-            } catch(e) { alert("שגיאת רשת"); return []; }
-        }
+			try {
+				// Request primary translation (dt=t), official dictionary (dt=bd), and alternatives (dt=at) in structured JSON format (dj=1)
+				const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=he&dt=t&dt=bd&dt=at&dj=1&q=${encodeURIComponent(word.trim())}`;
+				const res = await fetch(url).then(r => r.json());
+				let results = [];
+
+				// 1. Add primary translation from Google Translate
+				if (res.sentences && res.sentences.length > 0 && res.sentences[0].trans) {
+					results.push(res.sentences[0].trans.trim());
+				}
+
+				// 2. Add official Google Dictionary translations (grouped by part of speech: noun, verb, adjective, etc.)
+				if (res.dict && Array.isArray(res.dict)) {
+					res.dict.forEach(posGroup => {
+						if (posGroup.terms && Array.isArray(posGroup.terms)) {
+							posGroup.terms.forEach(term => {
+								const cleanTerm = term.trim();
+								if (cleanTerm && !results.includes(cleanTerm)) {
+									results.push(cleanTerm);
+								}
+							});
+						}
+					});
+				}
+
+				// 3. Fallback to alternative translations only if dictionary returned very few results (e.g., multi-word phrases)
+				if (results.length < 3 && res.alternative_translations && res.alternative_translations.length > 0) {
+					const alts = res.alternative_translations[0].alternative;
+					if (Array.isArray(alts)) {
+						alts.forEach(alt => {
+							const cleanAlt = (alt.word_postproc || "").trim();
+							if (cleanAlt && !results.includes(cleanAlt)) {
+								results.push(cleanAlt);
+							}
+						});
+					}
+				}
+
+				return results;
+			} catch (e) {
+				alert("????? ???");
+				return [];
+			}
+		}
 
         async function translateNewWord() {
             const word = document.getElementById('wordInput').value.trim().toLowerCase();
@@ -684,7 +721,7 @@
                     <div style="display:flex; gap:5px;">
                         <button class="icon-btn" onclick="openCatModal(${w.id})">📂</button>
                         <button class="icon-btn" onclick="openEdit(${w.id})">✏️</button>
-                        <button class="icon-btn" style="color:var(--error);" onclick="openDeleteDialog(${w.id})">✖</button>
+                        <button class="icon-btn" style="color:var(--error);" onclick="openDeleteDialog(${w.id})">�?/button>
                     </div>`;
                 fragment.appendChild(div);
             });
@@ -816,7 +853,7 @@
             const div = document.getElementById('categoryList');
             div.innerHTML = `<span class="chip ${currentFilter === 'all' ? 'selected' : ''}" onclick="filterBy('all')">הכל</span>`;
             db.categories.forEach((c, i) => {
-                div.innerHTML += `<span class="chip ${currentFilter === i ? 'selected' : ''}" onclick="filterBy(${i})">${c.name} <small onclick="deleteCat(${i}); event.stopPropagation()" style="font-weight:bold; margin-right:5px; color:var(--error);">✖</small></span>`;
+                div.innerHTML += `<span class="chip ${currentFilter === i ? 'selected' : ''}" onclick="filterBy(${i})">${c.name} <small onclick="deleteCat(${i}); event.stopPropagation()" style="font-weight:bold; margin-right:5px; color:var(--error);">�?/small></span>`;
             });
         }
         function deleteCat(i) { if(confirm("למחוק את הקטגוריה?")) { db.categories.splice(i, 1); currentFilter='all'; if (currentQuizSource == i) currentQuizSource = 'all'; save(); renderCategories(); } }
@@ -833,7 +870,7 @@
         }
         function updateEditStats(w) { const s = w.success || 0; const f = w.fail || 0; const t = s + f; const pct = t > 0 ? Math.round((s/t)*100) : 0; document.getElementById('wordStatsDisplay').innerText = `הצלחות: ${s} | כישלונות: ${f} (${pct}%)`; }
         function resetCurrentWordStats() { const w = db.words.find(w => w.id === activeWordId); if(w) { w.success = 0; w.fail = 0; save(); updateEditStats(w); renderFullList(); } }
-        function refreshEditView() { const w = db.words.find(w => w.id === activeWordId); document.getElementById('currentTranslations').innerHTML = w.he.map((h, i) => `<div style="display:flex; justify-content:space-between; margin:5px 0; border-bottom:1px solid #eee;"><span>${h}</span> <span style="color:red; cursor:pointer;" onclick="removeEditVal(${i})">✖</span></div>`).join(''); }
+        function refreshEditView() { const w = db.words.find(w => w.id === activeWordId); document.getElementById('currentTranslations').innerHTML = w.he.map((h, i) => `<div style="display:flex; justify-content:space-between; margin:5px 0; border-bottom:1px solid #eee;"><span>${h}</span> <span style="color:red; cursor:pointer;" onclick="removeEditVal(${i})">�?/span></div>`).join(''); }
         function addEditVal(v) { const w = db.words.find(w => w.id === activeWordId); if(!w.he.includes(v)) { w.he.push(v); save(); refreshEditView(); } }
         function removeEditVal(i) { const w = db.words.find(w => w.id === activeWordId); if(w.he.length > 1) { w.he.splice(i, 1); save(); refreshEditView(); } }
         function addManualToEdit() { const v = document.getElementById('manualEditInput').value.trim(); if(v) { addEditVal(v); document.getElementById('manualEditInput').value=''; } }
@@ -857,7 +894,7 @@
             const list = document.getElementById('catModalList'); list.innerHTML = '';
             db.categories.forEach((c, i) => {
                 const has = c.wordIds.includes(id);
-                list.innerHTML += `<button onclick="toggleInCat(${i})" style="width:100%; margin-bottom:5px; background:${has?'var(--secondary)':'var(--bg)'}; color:${has?'white':'var(--text)'}; border:1px solid var(--border); padding:10px; border-radius:8px;">${c.name} ${has?'✓':''}</button>`;
+                list.innerHTML += `<button onclick="toggleInCat(${i})" style="width:100%; margin-bottom:5px; background:${has?'var(--secondary)':'var(--bg)'}; color:${has?'white':'var(--text)'}; border:1px solid var(--border); padding:10px; border-radius:8px;">${c.name} ${has?'�?:''}</button>`;
             });
         }
         function toggleInCat(i) { const c = db.categories[i]; if(c.wordIds.includes(activeWordId)) c.wordIds = c.wordIds.filter(id => id !== activeWordId); else c.wordIds.push(activeWordId); save(); openCatModal(activeWordId); }
