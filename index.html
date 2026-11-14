@@ -9,7 +9,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iNjAiIGZpbGw9IiMxYTczZTgiLz4KICA8dGV4dCB4PSI1MCUiIHk9IjU1JSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjQ1IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtd2VpZ2h0PSJib2xkIj5FUDwvdGV4dD4KPC9zdmc+">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <!-- Firebase SDK (Compat versions for ease of integration) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -87,7 +87,6 @@
         .setting-row input[type="number"] { width: 60px; text-align: center; font-weight: bold; }
         
         .edit-stats { background: var(--bg); padding: 10px; border-radius: 10px; margin-bottom: 15px; text-align: center; font-size: 14px; }
-        
         .chart-container { width: 100%; height: 180px; margin: 10px 0; border: 1px solid var(--border); border-radius: 8px; padding: 5px; position: relative; background: var(--bg); }
         
         .history-table { width: 100%; border-collapse: collapse; margin-top: 0; font-size: 13px; }
@@ -108,15 +107,15 @@
     <!-- Firebase Auth Login Overlay -->
     <div id="authOverlay" class="modal" style="display:none; background: var(--bg); z-index: 10001; flex-direction:column; justify-content:center; align-items:center;">
         <div class="card" style="max-width:350px; text-align:center; padding: 40px 20px;">
-            <div style="font-size: 50px; margin-bottom: 10px;">🌍</div>
+            <div style="font-size: 50px; margin-bottom: 10px;">??</div>
             <h2 style="color:var(--primary); font-size: 28px; margin-top:0; margin-bottom: 5px;">English Practice</h2>
-            <p style="font-size:14px; color:#888; margin-bottom:25px;">סנכרון מלא בענן כדי שהמילון שלך יהיה זמין מכל מכשיר.</p>
+            <p style="font-size:14px; color:#888; margin-bottom:25px;">?????? ??? ???? ??? ??????? ??? ???? ???? ??? ?????.</p>
             
             <button onclick="loginWithGoogle()" style="background:#4285F4; font-size:16px; margin-bottom:15px; padding:15px; border-radius: 30px;">
-                התחבר עם Google
+                ????? ?? Google
             </button>
             <button onclick="continueAsGuest()" style="background:transparent; color:var(--text); border:1px solid var(--border); box-shadow:none; border-radius: 30px;">
-                המשך כאורח (מקומי בלבד)
+                ???? ????? (????? ????)
             </button>
         </div>
     </div>
@@ -124,68 +123,68 @@
     <div class="container">
         <div class="header-row">
             <h2 style="color: var(--primary); margin: 0;">English Practice</h2>
-            <button onclick="toggleTheme()" class="icon-btn" style="font-size:20px;">🌗</button>
+            <button onclick="toggleTheme()" class="icon-btn" style="font-size:20px;">??</button>
         </div>
 
         <div id="tab-practice" class="tab-content active">
             <div class="card">
-                <label style="font-size: 12px;">בחר מקור:</label>
+                <label style="font-size: 12px;">??? ????:</label>
                 <select id="quizSource" onchange="currentQuizSource = this.value; setupQuiz();"></select>
                 
                 <div class="mode-selector">
-                    <button class="mode-btn" id="m-en-he" onclick="setQuizMode('en-he')">ENG➔HEB</button>
-                    <button class="mode-btn" id="m-he-en" onclick="setQuizMode('he-en')">HEB➔ENG</button>
-                    <button class="mode-btn active" id="m-rand" onclick="setQuizMode('rand')">משולב 🎲</button>
+                    <button class="mode-btn" id="m-en-he" onclick="setQuizMode('en-he')">ENG-HEB</button>
+                    <button class="mode-btn" id="m-he-en" onclick="setQuizMode('he-en')">HEB-ENG</button>
+                    <button class="mode-btn active" id="m-rand" onclick="setQuizMode('rand')">????? ??</button>
                 </div>
 
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; padding-top:10px; border-top:1px solid var(--border);">
                     <div style="display:flex; flex-direction:column;">
-                        <span id="scoreCounter" style="font-weight:bold; font-size:14px; color:var(--text);">רצף נכון: 0</span>
+                        <span id="scoreCounter" style="font-weight:bold; font-size:14px; color:var(--text);">??? ????: 0</span>
                         <span id="sessionStats" style="font-size:12px; color:#888;">(0/0) 0%</span>
                     </div>
                     <div style="display:flex; gap:5px;">
-                        <button onclick="openHistory()" style="background:none; border:1px solid var(--border); color:var(--text); font-size:12px; padding:4px 10px; width:auto; margin:0;">📜 היסטוריה</button>
-                        <button onclick="resetSession()" style="background:none; border:1px solid var(--border); color:var(--text); font-size:12px; padding:4px 10px; width:auto; margin:0;">אפס</button>
+                        <button onclick="openHistory()" style="background:none; border:1px solid var(--border); color:var(--text); font-size:12px; padding:4px 10px; width:auto; margin:0;">?? ????????</button>
+                        <button onclick="resetSession()" style="background:none; border:1px solid var(--border); color:var(--text); font-size:12px; padding:4px 10px; width:auto; margin:0;">???</button>
                     </div>
                 </div>
             </div>
             
             <div id="quizSection" class="card">
-                <h2 id="questionText" style="text-align:center; margin: 20px 0; font-size:28px;">טוען...</h2>
+                <h2 id="questionText" style="text-align:center; margin: 20px 0; font-size:28px;">????...</h2>
                 <div id="error-display" style="color:red; text-align:center;"></div>
                 
                 <div style="text-align:center; margin-bottom:15px;">
-                   <span id="quizSpeaker" class="icon-btn" style="font-size:24px; display:none;" onclick="speakCurrentQuestion()">🔊</span>
+                   <span id="quizSpeaker" class="icon-btn" style="font-size:24px; display:none;" onclick="speakCurrentQuestion()">??</span>
                 </div>
                 <div id="quizOptions"></div>
                 <div id="feedback" style="text-align:center; font-weight:bold; margin:15px; min-height:40px;"></div>
-                <button onclick="setupQuiz()" style="background:var(--border); color:var(--text);">דלג / הבא �?/button>
+                <button onclick="setupQuiz()" style="background:var(--border); color:var(--text);">??? / ???</button>
             </div>
         </div>
 
         <div id="tab-dictionary" class="tab-content">
             <div class="card">
-                <h3>הוספה מהירה</h3>
+                <h3>????? ?????</h3>
                 <div style="display:flex; gap:10px;">
-                    <input type="text" id="wordInput" placeholder="מילה באנגלית..." onkeypress="if(event.key === 'Enter') translateNewWord()">
+                    <input type="text" id="wordInput" placeholder="???? ???????..." onkeypress="if(event.key === 'Enter') translateNewWord()">
                 </div>
-                <button onclick="translateNewWord()">חפש בגוגל 🔍</button>
+                <button onclick="translateNewWord()">??? ????? ??</button>
                 
                 <div id="addArea" style="display:none; margin-top:15px; border-top:1px solid var(--border); padding-top:15px;">
                     <div style="display:flex; justify-content:space-between;">
-                        <span class="toggle-link" id="toggleAllBtn" onclick="toggleAllAdd()" style="color:var(--primary); cursor:pointer; font-size:12px;">בחר הכל</span>
-                        <span class="icon-btn" id="addSpeakerBtn" onclick="speakText(document.getElementById('wordInput').value)">🔊 שמע</span>
+                        <span class="toggle-link" id="toggleAllBtn" onclick="toggleAllAdd()" style="color:var(--primary); cursor:pointer; font-size:12px;">??? ???</span>
+                        <span class="icon-btn" id="addSpeakerBtn" onclick="speakText(document.getElementById('wordInput').value)">?? ???</span>
                     </div>
                     <div id="addOptionsList" class="he-chips" style="margin:10px 0;"></div>
-                    <input type="text" id="manualAddInput" placeholder="תרגום ידני..." onkeypress="if(event.key === 'Enter') confirmAdd()">
-                    <button class="secondary-btn" onclick="confirmAdd()">שמור למילון �?/button>
+                    <input type="text" id="manualAddInput" placeholder="????? ????..." onkeypress="if(event.key === 'Enter') confirmAdd()">
+                    <button class="secondary-btn" onclick="confirmAdd()">???? ?????? ?</button>
                 </div>
             </div>
 
             <div class="card">
-                <h3>ניהול קטגוריות</h3>
+                <h3>????? ????????</h3>
                 <div style="display:flex; gap:5px;">
-                    <input type="text" id="newCatInput" placeholder="קטגוריה חדשה..." style="margin:0;">
+                    <input type="text" id="newCatInput" placeholder="??????? ????..." style="margin:0;">
                     <button onclick="addCategory()" style="width: auto; padding: 0 15px;">+</button>
                 </div>
                 <div id="categoryList" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:5px;"></div>
@@ -193,13 +192,13 @@
 
             <div class="card">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <h3 id="dictTitle" style="margin:0;">המילון</h3>
+                    <h3 id="dictTitle" style="margin:0;">??????</h3>
                     <div class="dict-controls">
-                        <select id="sortSelect" onchange="changeSort(this.value)" class="sort-select" title="סדר מיון">
-                            <option value="abc">🔤 A-Z</option>
-                            <option value="date">🕒 חדש</option>
+                        <select id="sortSelect" onchange="changeSort(this.value)" class="sort-select" title="??? ????">
+                            <option value="abc">?? A-Z</option>
+                            <option value="date">?? ???</option>
                         </select>
-                        <input type="text" id="searchDict" placeholder="חפש..." oninput="renderFullList()" style="width:100px; font-size:12px; padding:6px; margin:0;">
+                        <input type="text" id="searchDict" placeholder="???..." oninput="renderFullList()" style="width:100px; font-size:12px; padding:6px; margin:0;">
                     </div>
                 </div>
                 <div id="fullWordList" style="margin-top:5px;"></div>
@@ -207,81 +206,80 @@
         </div>
 
         <div id="tab-settings" class="tab-content">
-            <!-- אזור חשבון וסנכרון חדש -->
             <div class="card">
-                <h3 style="margin-top: 0;">חשבון וסנכרון בענן ☁️</h3>
+                <h3 style="margin-top: 0;">????? ??????? ???? ??</h3>
                 <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <p id="userInfoDisplay" style="font-size:13px; color:#555; margin: 0;">טוען סטטוס...</p>
+                    <p id="userInfoDisplay" style="font-size:13px; color:#555; margin: 0;">???? ?????...</p>
                 </div>
-                <button id="logoutBtn" onclick="logoutFirebase()" style="background:var(--border); color:var(--text); margin-top:15px; display:none;">התנתק מהחשבון</button>
-                <button id="loginBtnSettings" onclick="document.getElementById('authOverlay').style.display='flex'" style="background:var(--primary); margin-top:15px; display:none;">התחבר לשמירה בענן</button>
+                <button id="logoutBtn" onclick="logoutFirebase()" style="background:var(--border); color:var(--text); margin-top:15px; display:none;">????? ???????</button>
+                <button id="loginBtnSettings" onclick="document.getElementById('authOverlay').style.display='flex'" style="background:var(--primary); margin-top:15px; display:none;">????? ?????? ????</button>
             </div>
 
             <div class="card">
-                <h3>הגדרות תצוגה ושמע</h3>
+                <h3>?????? ????? ????</h3>
                 <div class="setting-row">
-                    <label for="autoAdvanceToggle">מעבר אוטומטי לשאלה הבאה</label>
+                    <label for="autoAdvanceToggle">???? ??????? ????? ????</label>
                     <input type="checkbox" id="autoAdvanceToggle" onchange="saveSettings()">
                 </div>
                 <div class="setting-row">
-                    <label for="autoSpeakToggle">🔊 הקראה אוטומטית (שאלה/משוב)</label>
+                    <label for="autoSpeakToggle">?? ????? ???????? (????/????)</label>
                     <input type="checkbox" id="autoSpeakToggle" onchange="saveSettings()">
                 </div>
                 <div class="setting-row">
-                    <label for="showSpeakerToggle">👁�?הצג רמקול להשמעה ידנית</label>
+                    <label for="showSpeakerToggle">??? ??? ????? ?????? ?????</label>
                     <input type="checkbox" id="showSpeakerToggle" onchange="saveSettings()">
                 </div>
             </div>
 
             <div class="card">
-                <h3>הגדרות למידה</h3>
+                <h3>?????? ?????</h3>
                 <div class="setting-row">
-                    <label for="newWordLimitInput">הגדר מילה כ"חדשה" עד (מס' חזרות):</label>
+                    <label for="newWordLimitInput">???? ???? ?"????" ?? (??' ?????):</label>
                     <input type="number" id="newWordLimitInput" min="1" max="50" onchange="saveSettings()">
                 </div>
-                <p style="font-size:11px; color:#888; margin-top:5px;">מילים "חדשות" יופיעו בתדירות גבוהה מאוד במבחן.</p>
+                <p style="font-size:11px; color:#888; margin-top:5px;">????? "?????" ?????? ??????? ????? ???? ?????.</p>
             </div>
 
             <div class="card">
-                <h3>ניהול נתונים מקומיים</h3>
-                <p style="font-size:12px; color:#888;">ניתן לייבא את המילון הקיים שלך כדי שיסתנכרן אוטומטית לענן.</p>
-                <button onclick="document.getElementById('fileIn').click()" style="background:var(--secondary);">📂 ייבוא לתוך הענן (מיזוג / החלפה)</button>
-                <button onclick="exportDictionary()" style="background:var(--border); color:var(--text); margin-top:10px;">📥 ייצוא לגיבוי למחשב</button>
+                <h3>????? ?????? ???????</h3>
+                <p style="font-size:12px; color:#888;">???? ????? ?? ?????? ????? ??? ??? ???????? ???????? ????.</p>
+                <button onclick="document.getElementById('fileIn').click()" style="background:var(--secondary);">?? ????? ???? ???? (????? / ?????)</button>
+                <button onclick="exportDictionary()" style="background:var(--border); color:var(--text); margin-top:10px;">?? ????? ?????? ?????</button>
                 <input type="file" id="fileIn" style="display:none" onchange="importDictionary(event)">
                 <hr style="margin:20px 0; border:0; border-top:1px solid var(--border);">
-                <button onclick="resetAllStats()" style="background:var(--warning); color:#333; margin-bottom:10px;">📊 איפוס סטטיסטיקת הצלחות</button>
-                <button onclick="clearAllData()" style="background:var(--error);">🗑�?מחיקת כל הנתונים</button>
+                <button onclick="resetAllStats()" style="background:var(--warning); color:#333; margin-bottom:10px;">?? ????? ????????? ??????</button>
+                <button onclick="clearAllData()" style="background:var(--error);">??? ????? ?? ???????</button>
             </div>
 
             <div class="card">
-                <h3>אודות וצור קשר</h3>
-                <p style="margin:5px 0; font-size:14px;">פותח ע"י <strong>דוד גולדפישר</strong></p>
+                <h3>????? ???? ???</h3>
+                <p style="margin:5px 0; font-size:14px;">???? ?"? <strong>??? ????????</strong></p>
                 <div style="display:flex; gap:10px; margin-top:15px;">
-                    <button onclick="window.open('https://wa.me/972528109862', '_blank')" style="background:#25D366; flex:1; border:none;">WhatsApp 🟢</button>
-                    <button onclick="window.open('mailto:Goldidavid1@gmail.com')" style="background:#EA4335; flex:1; border:none;">Email 📧</button>
+                    <button onclick="window.open('https://wa.me/972528109862', '_blank')" style="background:#25D366; flex:1; border:none;">WhatsApp ??</button>
+                    <button onclick="window.open('mailto:Goldidavid1@gmail.com')" style="background:#EA4335; flex:1; border:none;">Email ??</button>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="nav-bar">
-        <div class="nav-item active" onclick="showTab('practice', this)">🎓 תרגול</div>
-        <div class="nav-item" onclick="showTab('dictionary', this)">📚 מילון</div>
-        <div class="nav-item" onclick="showTab('settings', this)">⚙️ הגדרות</div>
+        <div class="nav-item active" onclick="showTab('practice', this)">?? ?????</div>
+        <div class="nav-item" onclick="showTab('dictionary', this)">?? ?????</div>
+        <div class="nav-item" onclick="showTab('settings', this)">?? ??????</div>
     </div>
 
     <div id="historyModal" class="modal">
         <div class="modal-content">
             <div class="modal-fixed-top">
-                <h3 style="margin:0 0 10px 0;">היסטוריית רצפים</h3>
+                <h3 style="margin:0 0 10px 0;">????????? ?????</h3>
                 <div class="chart-container" id="historyChart"></div>
-                <p style="text-align:center; font-size:11px; color:#888; margin:5px 0;">גרף שיפור (ציר Y: ציון, ציר X: מס' משחק)</p>
-                <button onclick="document.getElementById('historyModal').style.display='none'" style="background:var(--border); color:var(--text); width:100%; margin-top:10px;">סגור</button>
+                <p style="text-align:center; font-size:11px; color:#888; margin:5px 0;">??? ????? (??? Y: ????, ??? X: ??' ????)</p>
+                <button onclick="document.getElementById('historyModal').style.display='none'" style="background:var(--border); color:var(--text); width:100%; margin-top:10px;">????</button>
             </div>
             <div class="modal-scroll-area">
                 <table class="history-table">
                     <thead>
-                        <tr><th>#</th><th>תאריך</th><th>רצף</th><th><button onclick="clearHistory()" class="clean-all-btn">נקה<br>הכל</button></th></tr>
+                        <tr><th>#</th><th>?????</th><th>???</th><th><button onclick="clearHistory()" class="clean-all-btn">???<br>???</button></th></tr>
                     </thead>
                     <tbody id="historyList"></tbody>
                 </table>
@@ -291,32 +289,32 @@
 
     <div id="editModal" class="modal">
         <div class="modal-content" style="padding:25px; overflow-y:auto; display:block;">
-            <h3 id="editWordTitle" style="margin-top:0;">עריכה</h3>
+            <h3 id="editWordTitle" style="margin-top:0;">?????</h3>
             <div class="edit-stats">
-                <div>סטטיסטיקה: <span id="wordStatsDisplay"></span></div>
-                <button onclick="resetCurrentWordStats()" style="background:none; color:var(--primary); border:1px solid var(--primary); padding:5px 10px; font-size:12px; margin-top:5px; width:auto;">אפס סטטיסטיקה</button>
+                <div>?????????: <span id="wordStatsDisplay"></span></div>
+                <button onclick="resetCurrentWordStats()" style="background:none; color:var(--primary); border:1px solid var(--primary); padding:5px 10px; font-size:12px; margin-top:5px; width:auto;">??? ?????????</button>
             </div>
             <div class="edit-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <div class="edit-col" style="background:var(--bg); padding:10px; border-radius:10px;"><h4>שלך</h4><div id="currentTranslations"></div></div>
-                <div class="edit-col" style="background:var(--bg); padding:10px; border-radius:10px;"><h4>גוגל</h4><div id="googleSuggestions"></div></div>
+                <div class="edit-col" style="background:var(--bg); padding:10px; border-radius:10px;"><h4>???</h4><div id="currentTranslations"></div></div>
+                <div class="edit-col" style="background:var(--bg); padding:10px; border-radius:10px;"><h4>????</h4><div id="googleSuggestions"></div></div>
             </div>
-            <input type="text" id="manualEditInput" placeholder="הוסף..." onkeypress="if(event.key === 'Enter') addManualToEdit()">
-            <button class="secondary-btn" onclick="addManualToEdit()">הוסף</button>
-            <button onclick="closeEdit()" style="background:var(--border); color:var(--text); margin-top:10px;">סגור</button>
+            <input type="text" id="manualEditInput" placeholder="????..." onkeypress="if(event.key === 'Enter') addManualToEdit()">
+            <button class="secondary-btn" onclick="addManualToEdit()">????</button>
+            <button onclick="closeEdit()" style="background:var(--border); color:var(--text); margin-top:10px;">????</button>
         </div>
     </div>
 
-    <div id="catModal" class="modal"><div class="modal-content" style="padding:25px; display:block;"><h3>שיוך לקטגוריה</h3><div id="catModalList"></div><button onclick="closeCatModal()" style="background:var(--border); color:var(--text); margin-top:15px;">סגור</button></div></div>
-    <div id="deleteModal" class="modal"><div class="modal-content" style="padding:25px; text-align:center; display:block;"><h3 style="color:var(--error);">מחיקה</h3><p id="deleteModalText"></p><div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;"><button id="btnRemoveFromCat" style="background:var(--warning); color:#333;">הסר מהקטגוריה</button><button id="btnDeleteGlobal" style="background:var(--error);">מחק מהמילון</button><button onclick="closeDeleteModal()" style="background:var(--border); color:var(--text);">ביטול</button></div></div></div>
+    <div id="catModal" class="modal"><div class="modal-content" style="padding:25px; display:block;"><h3>???? ????????</h3><div id="catModalList"></div><button onclick="closeCatModal()" style="background:var(--border); color:var(--text); margin-top:15px;">????</button></div></div>
+    <div id="deleteModal" class="modal"><div class="modal-content" style="padding:25px; text-align:center; display:block;"><h3 style="color:var(--error);">?????</h3><p id="deleteModalText"></p><div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;"><button id="btnRemoveFromCat" style="background:var(--warning); color:#333;">??? ?????????</button><button id="btnDeleteGlobal" style="background:var(--error);">??? ???????</button><button onclick="closeDeleteModal()" style="background:var(--border); color:var(--text);">?????</button></div></div></div>
 
     <div id="importModal" class="modal">
         <div class="modal-content" style="text-align:center; padding:25px; display:block;">
-            <h3 style="margin-top:0;">בחירת סוג ייבוא</h3>
-            <p>נמצא קובץ גיבוי. כיצד תרצה לטעון אותו?</p>
+            <h3 style="margin-top:0;">????? ??? ?????</h3>
+            <p>???? ???? ?????. ???? ???? ????? ?????</p>
             <div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">
-                <button onclick="executeImport('merge')" style="background:var(--primary);">�?מיזוג (הוספה לקיים)</button>
-                <button onclick="executeImport('replace')" style="background:var(--error);">⚠️ החלפה (מחיקת הקיים)</button>
-                <button onclick="closeImportModal()" style="background:var(--border); color:var(--text);">ביטול</button>
+                <button onclick="executeImport('merge')" style="background:var(--primary);">? ????? (????? ?????)</button>
+                <button onclick="executeImport('replace')" style="background:var(--error);">?? ????? (????? ?????)</button>
+                <button onclick="closeImportModal()" style="background:var(--border); color:var(--text);">?????</button>
             </div>
         </div>
     </div>
@@ -325,6 +323,7 @@
         // =========================================================================
         // ======================= FIREBASE CONFIGURATION ==========================
         // =========================================================================
+        
         const firebaseConfig = {
 		  apiKey: "AIzaSyAHC-21WlwH2xeq8spUyI8KtT0AXGow_dQ",
 		  authDomain: "english-practice-8acf7.firebaseapp.com",
@@ -337,28 +336,17 @@
         
         // =========================================================================
 
-        let auth, firestore;
-        let currentUser = null;
-        let isGuest = false;
-        
-        // אתחול Firebase רק אם הוגדר המפתח (כדי שהקוד יעבוד גם ללא הגדרה)
-        if (firebaseConfig && Object.keys(firebaseConfig).length > 0 && firebaseConfig.apiKey) {
-            firebase.initializeApp(firebaseConfig);
-            auth = firebase.auth();
-            firestore = firebase.firestore();
-        } else {
-            console.warn("Firebase config is missing. App will run in local mode only.");
-        }
-
         const DB_KEY = 'EnglishApp_V8_Pro';
         let db = { words: [], categories: [], theme: 'light', sortOrder: 'abc', autoAdvance: true, autoSpeak: true, showSpeaker: true, newWordLimit: 3, history: [] };
         let storageAvailable = true;
 
         try {
-            if(typeof localStorage === 'undefined') throw new Error();
+            if (typeof localStorage === 'undefined') throw new Error();
             const localObj = localStorage.getItem(DB_KEY);
             if (localObj) {
                 db = JSON.parse(localObj);
+                if (!db.words) db.words = [];
+                if (!db.categories) db.categories = [];
                 if (!db.history) db.history = [];
             }
         } catch(e) {
@@ -372,16 +360,15 @@
         let isProcessing = false;
         let currentQuestionAttempted = false;
 
-        // --- Firebase Auth & Sync Logic ---
+        let auth = null, firestore = null;
+        let currentUser = null;
+        let isGuest = false;
         let saveTimeout = null;
 
         function save() { 
-            // 1. קודם כל שומר מקומית לביצועים מהירים
-            if(storageAvailable) {
+            if (storageAvailable) {
                 try { localStorage.setItem(DB_KEY, JSON.stringify(db)); } catch(e) {}
             }
-            
-            // 2. אם מחובר, דוחף לענן (עם עיכוב של שנייה כדי לא להציף קריאות בשרת)
             if (currentUser && !isGuest && firestore) {
                 clearTimeout(saveTimeout);
                 saveTimeout = setTimeout(saveToCloud, 1000);
@@ -391,25 +378,23 @@
         async function saveToCloud() {
             if (!currentUser || !firestore) return;
             try {
-                // המרת JSON מנקה אובייקטים בעייתיים לפני שליחה למסד נתונים
                 const cleanDb = JSON.parse(JSON.stringify(db));
                 await firestore.collection("users").doc(currentUser.uid).set(cleanDb);
-                console.log("Synced to Cloud �?);
             } catch(e) {
                 console.error("Cloud Sync Error:", e);
             }
         }
 
         function loginWithGoogle() {
-            if (!auth) { alert("יש להזין firebaseConfig בקוד קודם."); return; }
+            if (!auth) { alert("?? ????? firebaseConfig ???? ????."); return; }
             const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider).catch(err => alert("שגיאת התחברות: " + err.message));
+            auth.signInWithPopup(provider).catch(err => alert("????? ???????: " + err.message));
         }
 
         function continueAsGuest() {
             isGuest = true;
             document.getElementById('authOverlay').style.display = 'none';
-            document.getElementById('userInfoDisplay').innerText = `מצב אורח (הנתונים נשמרים על מכשיר זה בלבד)`;
+            document.getElementById('userInfoDisplay').innerText = "??? ???? (??????? ?????? ?? ????? ?? ????)";
             document.getElementById('logoutBtn').style.display = 'none';
             document.getElementById('loginBtnSettings').style.display = 'block';
             initializeAppUI();
@@ -417,37 +402,9 @@
 
         function logoutFirebase() {
             if (auth) {
-                auth.signOut().then(() => {
-                    location.reload(); 
-                });
+                auth.signOut().then(() => location.reload());
             }
         }
-
-        // Listener לשינוי סטטוס התחברות
-        if (auth) {
-            auth.onAuthStateChanged(async (user) => {
-                const overlay = document.getElementById('authOverlay');
-                if (user) {
-                    currentUser = user;
-                    isGuest = false;
-                    overlay.style.display = 'none';
-                    document.getElementById('userInfoDisplay').innerText = `מחובר כ: ${user.email} ✅`;
-                    document.getElementById('logoutBtn').style.display = 'block';
-                    document.getElementById('loginBtnSettings').style.display = 'none';
-                    
-                    await loadCloudData();
-                } else {
-                    currentUser = null;
-                    if (!isGuest) overlay.style.display = 'flex';
-                }
-            });
-        } else {
-            // Fallback במקרה ששכחת לשים config
-            document.getElementById('authOverlay').style.display = 'flex';
-        }
-
-        // Initialize UI immediately from local storage so the app never hangs on "Loading..."
-        initializeAppUI();
 
         async function loadCloudData() {
             if (!currentUser || !firestore) return;
@@ -458,7 +415,7 @@
                 if (docSnap.exists) {
                     const cloudDb = docSnap.data();
                     
-                    // Merge local words with cloud words so newly saved local words are never lost
+                    // Merge local words with cloud words so newly added words are never lost
                     const mergedWords = [...(cloudDb.words || [])];
                     if (db.words && db.words.length > 0) {
                         db.words.forEach(localWord => {
@@ -483,16 +440,13 @@
                     if (storageAvailable) {
                         localStorage.setItem(DB_KEY, JSON.stringify(db));
                     }
-                    // Update cloud if local had newer words
                     await saveToCloud();
                 } else {
-                    // First time in cloud for this user - upload existing local data
                     await saveToCloud();
                 }
                 initializeAppUI();
-            } catch (e) {
+            } catch(e) {
                 console.error("Cloud load error:", e);
-                // Keep using local data if cloud fails or is offline
                 initializeAppUI();
             }
         }
@@ -500,10 +454,10 @@
         function initializeAppUI() {
             applyTheme();
             
-            document.getElementById('autoAdvanceToggle').checked = db.autoAdvance;
-            document.getElementById('autoSpeakToggle').checked = db.autoSpeak;
-            document.getElementById('showSpeakerToggle').checked = db.showSpeaker;
-            document.getElementById('newWordLimitInput').value = db.newWordLimit;
+            document.getElementById('autoAdvanceToggle').checked = db.autoAdvance !== false;
+            document.getElementById('autoSpeakToggle').checked = db.autoSpeak !== false;
+            document.getElementById('showSpeakerToggle').checked = db.showSpeaker !== false;
+            document.getElementById('newWordLimitInput').value = db.newWordLimit || 3;
             
             renderCategories(); 
             renderFullList(); 
@@ -511,14 +465,12 @@
             setupQuiz();
         }
 
-        // --- App Logic ---
-        
         function saveHistory(finalScore) {
-            if(finalScore > 0) {
+            if (finalScore > 0) {
                 const now = new Date();
                 const dateStr = now.toLocaleDateString('he-IL') + ' ' + now.toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
                 db.history.push({ date: dateStr, score: finalScore });
-                if(db.history.length > 50) db.history.shift();
+                if (db.history.length > 50) db.history.shift();
                 save();
             }
         }
@@ -532,18 +484,17 @@
             const tbody = document.getElementById('historyList');
             tbody.innerHTML = '';
             const chartDiv = document.getElementById('historyChart');
-            if (db.history.length < 1) {
-                chartDiv.innerHTML = '<span style="width:100%; position:absolute; top:50%; text-align:center; color:#ccc;">אין נתונים</span>';
+            if (!db.history || db.history.length < 1) {
+                chartDiv.innerHTML = '<span style="width:100%; position:absolute; top:50%; text-align:center; color:#ccc;">??? ??????</span>';
                 return;
             }
             const reversedHist = [...db.history].reverse();
             reversedHist.forEach((item, index) => {
                 const realIndex = db.history.length - 1 - index; 
                 const displayIndex = realIndex + 1; 
-                tbody.innerHTML += `<tr><td style="color:#888;">${displayIndex}</td><td>${item.date}</td><td style="font-weight:bold; color:var(--primary);">${item.score}</td><td><button onclick="deleteHistoryItem(${realIndex})" style="background:none; border:none; color:var(--error); padding:0; margin:0; width:auto;">�?/button></td></tr>`;
+                tbody.innerHTML += `<tr><td style="color:#888;">${displayIndex}</td><td>${item.date}</td><td style="font-weight:bold; color:var(--primary);">${item.score}</td><td><button onclick="deleteHistoryItem(${realIndex})" style="background:none; border:none; color:var(--error); padding:0; margin:0; width:auto;">?</button></td></tr>`;
             });
 
-            // SVG Graph
             const scores = db.history.map(x => x.score);
             const maxScore = Math.max(...scores, 10);
             const w = chartDiv.clientWidth - 40;
@@ -565,20 +516,20 @@
                 const y = startY - ((item.score / maxScore) * h);
                 polyline += `${x},${y} `;
                 dots += `<circle cx="${x}" cy="${y}" r="3" class="graph-dot" />`;
-                if(i === 0 || i === db.history.length-1) {
+                if (i === 0 || i === db.history.length - 1) {
                     svg += `<text x="${x}" y="${startY + 15}" class="chart-label">${i+1}</text>`;
                 }
             });
-            if(db.history.length > 1) { svg += `<polyline points="${polyline}" class="graph-line" />`; }
+            if (db.history.length > 1) { svg += `<polyline points="${polyline}" class="graph-line" />`; }
             svg += dots; svg += `</svg>`;
             chartDiv.innerHTML = svg;
         }
 
-        function deleteHistoryItem(index) { if(confirm("למחוק שורה זו?")) { db.history.splice(index, 1); save(); renderHistory(); } }
-        function clearHistory() { if(confirm("למחוק את כל היסטוריית הרצפים?")) { db.history = []; save(); renderHistory(); } }
-        function cleanHe(str) { return str.replace(/[\u0591-\u05C7]/g, ""); }
+        function deleteHistoryItem(index) { if (confirm("????? ???? ???")) { db.history.splice(index, 1); save(); renderHistory(); } }
+        function clearHistory() { if (confirm("????? ?? ?? ????????? ???????")) { db.history = []; save(); renderHistory(); } }
+        function cleanHe(str) { return (str || "").replace(/[\u0591-\u05C7]/g, ""); }
         function toggleTheme() { db.theme = db.theme === 'light' ? 'dark' : 'light'; applyTheme(); save(); }
-        function applyTheme() { document.documentElement.setAttribute('data-theme', db.theme); }
+        function applyTheme() { document.documentElement.setAttribute('data-theme', db.theme || 'light'); }
 
         function speakText(text) {
             if (!text) return;
@@ -594,370 +545,13 @@
             document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
             document.getElementById('tab-' + t).classList.add('active');
-            if(el) el.classList.add('active');
+            if (el) el.classList.add('active');
             
-            if(t === 'dictionary') { 
+            if (t === 'dictionary') { 
                 document.getElementById('sortSelect').value = db.sortOrder || 'abc';
                 renderFullList(); renderCategories(); setTimeout(() => document.getElementById('wordInput').focus(), 100); 
             }
-            if(t === 'practice') { updateQuizSources(); setupQuiz(); }
+            if (t === 'practice') { updateQuizSources(); setupQuiz(); }
         }
 
-        function saveSettings() {
-            db.autoAdvance = document.getElementById('autoAdvanceToggle').checked;
-            db.autoSpeak = document.getElementById('autoSpeakToggle').checked;
-            db.showSpeaker = document.getElementById('showSpeakerToggle').checked;
-            let limit = parseInt(document.getElementById('newWordLimitInput').value);
-            db.newWordLimit = limit < 1 ? 1 : limit;
-            save();
-            if(document.getElementById('tab-dictionary').classList.contains('active')) renderFullList();
-            if(document.getElementById('tab-practice').classList.contains('active')) setupQuiz();
-        }
-
-        async function fetchGoogle(word) {
-			try {
-				// Request primary translation (dt=t), official dictionary (dt=bd), and alternatives (dt=at) in structured JSON format (dj=1)
-				const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=he&dt=t&dt=bd&dt=at&dj=1&q=${encodeURIComponent(word.trim())}`;
-				const res = await fetch(url).then(r => r.json());
-				let results = [];
-
-				// 1. Add primary translation from Google Translate
-				if (res.sentences && res.sentences.length > 0 && res.sentences[0].trans) {
-					results.push(res.sentences[0].trans.trim());
-				}
-
-				// 2. Add official Google Dictionary translations (grouped by part of speech: noun, verb, adjective, etc.)
-				if (res.dict && Array.isArray(res.dict)) {
-					res.dict.forEach(posGroup => {
-						if (posGroup.terms && Array.isArray(posGroup.terms)) {
-							posGroup.terms.forEach(term => {
-								const cleanTerm = term.trim();
-								if (cleanTerm && !results.includes(cleanTerm)) {
-									results.push(cleanTerm);
-								}
-							});
-						}
-					});
-				}
-
-				// 3. Fallback to alternative translations only if dictionary returned very few results (e.g., multi-word phrases)
-				if (results.length < 3 && res.alternative_translations && res.alternative_translations.length > 0) {
-					const alts = res.alternative_translations[0].alternative;
-					if (Array.isArray(alts)) {
-						alts.forEach(alt => {
-							const cleanAlt = (alt.word_postproc || "").trim();
-							if (cleanAlt && !results.includes(cleanAlt)) {
-								results.push(cleanAlt);
-							}
-						});
-					}
-				}
-
-				return results;
-			} catch (e) {
-				alert("????? ???");
-				return [];
-			}
-		}
-
-        async function translateNewWord() {
-            const word = document.getElementById('wordInput').value.trim().toLowerCase();
-            if(!word) return;
-            const existing = db.words.find(w => w.en.toLowerCase() === word);
-            if(existing) { if(confirm("קיימת. לערוך?")) openEdit(existing.id); return; }
-            const res = await fetchGoogle(word);
-            document.getElementById('addArea').style.display = 'block';
-            document.getElementById('addOptionsList').innerHTML = res.map(t => `<span class="chip selected" onclick="this.classList.toggle('selected'); updateToggleLink();" data-val="${t}">${t}</span>`).join('');
-            updateToggleLink();
-            const spkBtn = document.getElementById('addSpeakerBtn');
-            spkBtn.style.display = db.showSpeaker ? 'inline-block' : 'none';
-            if(db.autoSpeak) speakText(word);
-        }
-
-        function toggleAllAdd() {
-            const chips = document.querySelectorAll('#addOptionsList .chip');
-            const anyUn = Array.from(chips).some(c => !c.classList.contains('selected'));
-            chips.forEach(c => anyUn ? c.classList.add('selected') : c.classList.remove('selected'));
-            updateToggleLink();
-        }
-
-        function updateToggleLink() {
-            const chips = document.querySelectorAll('#addOptionsList .chip');
-            const anyUn = Array.from(chips).some(c => !c.classList.contains('selected'));
-            document.getElementById('toggleAllBtn').innerText = anyUn ? "בחר הכל" : "בטל בחירה להכל";
-        }
-
-        function confirmAdd() {
-            const en = document.getElementById('wordInput').value.trim().toLowerCase();
-            const manual = document.getElementById('manualAddInput').value.trim();
-            let selected = Array.from(document.querySelectorAll('#addOptionsList .chip.selected')).map(c => c.textContent);
-            if(manual) selected.push(manual);
-            if(!selected.length) return;
-            db.words.push({ id: Date.now(), en, he: selected, success: 0, fail: 0 });
-            save();
-            document.getElementById('addArea').style.display = 'none';
-            document.getElementById('wordInput').value = '';
-            document.getElementById('manualAddInput').value = '';
-            document.getElementById('wordInput').focus();
-            renderFullList();
-        }
-
-        function changeSort(val) { db.sortOrder = val; save(); renderFullList(); }
-
-        function renderFullList() {
-            const listDiv = document.getElementById('fullWordList');
-            const term = document.getElementById('searchDict').value.toLowerCase();
-            listDiv.innerHTML = '';
-            
-            let pool = (currentFilter === 'all') ? db.words : db.words.filter(w => db.categories[currentFilter].wordIds.includes(w.id));
-            if(term) pool = pool.filter(w => w.en.toLowerCase().includes(term) || w.he.some(h => h.includes(term)));
-            
-            let displayPool = [...pool];
-            if(db.sortOrder === 'date') displayPool.sort((a, b) => b.id - a.id);
-            else displayPool.sort((a, b) => a.en.localeCompare(b.en));
-
-            document.getElementById('dictTitle').innerText = (currentFilter === 'all') ? `מילון (${displayPool.length})` : `${db.categories[currentFilter].name} (${displayPool.length})`;
-            
-            const fragment = document.createDocumentFragment();
-            displayPool.forEach(w => {
-                const div = document.createElement('div');
-                div.className = 'word-item';
-                const success = w.success || 0;
-                const fail = w.fail || 0;
-                const total = success + fail;
-                const ratio = total === 0 ? 0 : Math.round((success / total) * 100);
-                const statClass = ratio > 70 ? 'stat-good' : (ratio < 40 && total > 0 ? 'stat-bad' : '');
-                const speakerHtml = db.showSpeaker ? `<span class="speaker" onclick="speakText('${w.en}')">🔊</span>` : '';
-
-                div.innerHTML = `
-                    <div style="flex:1">
-                        <div>${speakerHtml} <strong>${w.en}</strong> ${total > 0 ? `<span class="stat-badge ${statClass}">(${success}/${total}) ${ratio}%</span>` : ''}</div>
-                        <div class="he-chips">${w.he.map(h => `<span class="chip" style="cursor:default; font-size:11px; padding:2px 8px;">${h}</span>`).join('')}</div>
-                    </div>
-                    <div style="display:flex; gap:5px;">
-                        <button class="icon-btn" onclick="openCatModal(${w.id})">📂</button>
-                        <button class="icon-btn" onclick="openEdit(${w.id})">✏️</button>
-                        <button class="icon-btn" style="color:var(--error);" onclick="openDeleteDialog(${w.id})">�?/button>
-                    </div>`;
-                fragment.appendChild(div);
-            });
-            listDiv.appendChild(fragment);
-        }
-
-        function updateQuizSources() {
-             const s = document.getElementById('quizSource');
-             s.innerHTML = '<option value="all">כל המילון</option>';
-             db.categories.forEach((c, i) => {
-                 const opt = document.createElement('option');
-                 opt.value = i; opt.innerText = `${c.name} (${c.wordIds.length})`; s.appendChild(opt);
-             });
-             if (currentQuizSource !== 'all' && !db.categories[currentQuizSource]) { currentQuizSource = 'all'; }
-             s.value = currentQuizSource;
-        }
-
-        function setupQuiz() {
-            isProcessing = false;
-            currentQuestionAttempted = false;
-            
-            try {
-                const src = document.getElementById('quizSource').value;
-                let pool = (src === 'all') ? db.words : db.words.filter(w => db.categories[src].wordIds.includes(w.id));
-                
-                if(!pool || pool.length < 4) {
-                    document.getElementById('questionText').innerText = (pool.length === 0) ? "המילון ריק. הוסף מילים תחילה." : "נדרשות 4 מילים לפחות";
-                    document.getElementById('quizOptions').innerHTML = '';
-                    document.getElementById('quizSpeaker').style.display = 'none';
-                    return;
-                }
-                
-                let weightedPool = [];
-                pool.forEach(w => {
-                    let totalAttempts = (w.success || 0) + (w.fail || 0);
-                    let weight = 1;
-                    if (totalAttempts < db.newWordLimit) { weight = 10; } 
-                    else { weight = 1 + (w.fail || 0) * 2; if((w.success || 0) > (w.fail || 0) + 5) weight = 1; }
-                    for(let i=0; i<weight; i++) weightedPool.push(w);
-                });
-                
-                const correctObj = weightedPool[Math.floor(Math.random() * weightedPool.length)];
-                if (!correctObj) throw new Error("Could not select word");
-                
-                currentQuestionEn = correctObj.en;
-                let isEn = quizMode === 'en-he' || (quizMode === 'rand' && Math.random() < 0.5);
-                if(quizMode === 'he-en') isEn = false;
-
-                const correctHe = correctObj.he[Math.floor(Math.random() * correctObj.he.length)];
-                const question = isEn ? correctObj.en : correctHe;
-                const answer = isEn ? correctHe : correctObj.en;
-
-                document.getElementById('questionText').innerText = question;
-                document.getElementById('feedback').innerText = '';
-                
-                const spkBtn = document.getElementById('quizSpeaker');
-                spkBtn.style.display = (isEn && db.showSpeaker) ? 'inline-block' : 'none';
-                if(isEn && db.autoSpeak) { speakText(question); }
-
-                let opts = [answer];
-                let attempts = 0;
-                // Limit loop to 50 attempts to prevent browser freeze when translations overlap
-                while (opts.length < 4 && attempts < 50) {
-                    attempts++;
-                    const r = pool[Math.floor(Math.random() * pool.length)];
-                    if (!r || r.id === correctObj.id) continue;
-                    if (isEn) {
-                        const potentialHe = r.he[0]; 
-                        if (!correctObj.he.some(h => cleanHe(h) === cleanHe(potentialHe)) && !opts.includes(potentialHe)) {
-                            opts.push(potentialHe);
-                        }
-                    } else {
-                        const potentialEn = r.en;
-                        const hasSameHe = r.he.some(h => cleanHe(h) === cleanHe(question));
-                        if (!hasSameHe && !opts.includes(potentialEn)) {
-                            opts.push(potentialEn);
-                        }
-                    }
-                }
-                
-                if (opts.length < 4) { document.getElementById('questionText').innerText = "אין מספיק מילים שונות למבחן"; return; }
-                opts.sort(() => Math.random() - 0.5);
-
-                const container = document.getElementById('quizOptions');
-                container.innerHTML = '';
-                opts.forEach(o => {
-                    const btn = document.createElement('button');
-                    btn.className = 'option-btn'; btn.textContent = o;
-                    btn.onclick = () => handleAnswer(btn, o, answer, isEn, correctObj);
-                    container.appendChild(btn);
-                });
-            } catch(e) { document.getElementById('questionText').innerText = "שגיאה בטעינה: " + e.message; }
-        }
-
-        function handleAnswer(btn, selected, correct, isEn, wordObj) {
-            if (isProcessing || btn.disabled) return;
-            const isCorrect = isEn ? wordObj.he.includes(selected) : selected === wordObj.en;
-
-            if (!currentQuestionAttempted) {
-                if (isCorrect) { wordObj.success++; score++; sessionCorrect++; sessionTotal++; } 
-                else { wordObj.fail++; saveHistory(score); score = 0; sessionTotal++; }
-                currentQuestionAttempted = true; 
-                save(); updateSessionStats();
-            }
-
-            if (isCorrect) {
-                isProcessing = true;
-                document.getElementById('scoreCounter').innerText = `רצף נכון: ${score}`;
-                btn.style.background = 'var(--secondary)'; btn.style.borderColor = 'var(--secondary)'; btn.style.color = 'white';
-                if(db.autoSpeak) speakText("Correct");
-                if(db.autoAdvance) setTimeout(setupQuiz, 1000);
-            } else {
-                btn.disabled = true; btn.style.background = 'var(--error)'; btn.style.color = 'white';
-                document.getElementById('scoreCounter').innerText = `רצף נכון: ${score}`;
-                document.getElementById('feedback').innerText = `נסה שוב`;
-                document.getElementById('feedback').style.color = 'var(--error)';
-                if(db.autoSpeak) speakText("Wrong");
-            }
-        }
-
-        function updateSessionStats() {
-            const pct = sessionTotal > 0 ? Math.round((sessionCorrect / sessionTotal) * 100) : 0;
-            document.getElementById('sessionStats').innerText = `(${sessionCorrect}/${sessionTotal}) ${pct}%`;
-        }
-
-        function resetSession() { saveHistory(score); score = 0; sessionCorrect = 0; sessionTotal = 0; document.getElementById('scoreCounter').innerText = "רצף נכון: 0"; updateSessionStats(); }
-        function speakCurrentQuestion() { speakText(currentQuestionEn); }
-
-        function addCategory() {
-            const name = document.getElementById('newCatInput').value.trim();
-            if(!name || db.categories.find(c => c.name === name)) return;
-            db.categories.push({ name, wordIds: [] }); save(); renderCategories();
-            document.getElementById('newCatInput').value = '';
-        }
-        function renderCategories() {
-            const div = document.getElementById('categoryList');
-            div.innerHTML = `<span class="chip ${currentFilter === 'all' ? 'selected' : ''}" onclick="filterBy('all')">הכל</span>`;
-            db.categories.forEach((c, i) => {
-                div.innerHTML += `<span class="chip ${currentFilter === i ? 'selected' : ''}" onclick="filterBy(${i})">${c.name} <small onclick="deleteCat(${i}); event.stopPropagation()" style="font-weight:bold; margin-right:5px; color:var(--error);">�?/small></span>`;
-            });
-        }
-        function deleteCat(i) { if(confirm("למחוק את הקטגוריה?")) { db.categories.splice(i, 1); currentFilter='all'; if (currentQuizSource == i) currentQuizSource = 'all'; save(); renderCategories(); } }
-        function filterBy(idx) { currentFilter = idx; renderCategories(); renderFullList(); }
-
-        async function openEdit(id) {
-            activeWordId = id; const w = db.words.find(w => w.id === id);
-            document.getElementById('editWordTitle').innerText = w.en;
-            updateEditStats(w);
-            document.getElementById('editModal').style.display = 'flex';
-            refreshEditView();
-            const sug = await fetchGoogle(w.en);
-            document.getElementById('googleSuggestions').innerHTML = sug.map(s => `<div class="chip" onclick="addEditVal('${s}')">${s} +</div>`).join('');
-        }
-        function updateEditStats(w) { const s = w.success || 0; const f = w.fail || 0; const t = s + f; const pct = t > 0 ? Math.round((s/t)*100) : 0; document.getElementById('wordStatsDisplay').innerText = `הצלחות: ${s} | כישלונות: ${f} (${pct}%)`; }
-        function resetCurrentWordStats() { const w = db.words.find(w => w.id === activeWordId); if(w) { w.success = 0; w.fail = 0; save(); updateEditStats(w); renderFullList(); } }
-        function refreshEditView() { const w = db.words.find(w => w.id === activeWordId); document.getElementById('currentTranslations').innerHTML = w.he.map((h, i) => `<div style="display:flex; justify-content:space-between; margin:5px 0; border-bottom:1px solid #eee;"><span>${h}</span> <span style="color:red; cursor:pointer;" onclick="removeEditVal(${i})">�?/span></div>`).join(''); }
-        function addEditVal(v) { const w = db.words.find(w => w.id === activeWordId); if(!w.he.includes(v)) { w.he.push(v); save(); refreshEditView(); } }
-        function removeEditVal(i) { const w = db.words.find(w => w.id === activeWordId); if(w.he.length > 1) { w.he.splice(i, 1); save(); refreshEditView(); } }
-        function addManualToEdit() { const v = document.getElementById('manualEditInput').value.trim(); if(v) { addEditVal(v); document.getElementById('manualEditInput').value=''; } }
-        function closeEdit() { document.getElementById('editModal').style.display = 'none'; renderFullList(); }
-
-        function openDeleteDialog(id) {
-            activeWordId = id; const w = db.words.find(w => w.id === id);
-            document.getElementById('deleteModalText').innerText = w.en;
-            document.getElementById('deleteModal').style.display = 'flex';
-            const btnCat = document.getElementById('btnRemoveFromCat');
-            if(currentFilter !== 'all') {
-                btnCat.style.display = 'block';
-                btnCat.onclick = () => { db.categories[currentFilter].wordIds = db.categories[currentFilter].wordIds.filter(wid => wid !== id); save(); closeDeleteModal(); renderFullList(); };
-            } else { btnCat.style.display = 'none'; }
-            document.getElementById('btnDeleteGlobal').onclick = () => { db.words = db.words.filter(w => w.id !== id); db.categories.forEach(c => c.wordIds = c.wordIds.filter(wid => wid !== id)); save(); closeDeleteModal(); renderFullList(); };
-        }
-        function closeDeleteModal() { document.getElementById('deleteModal').style.display = 'none'; }
-
-        function openCatModal(id) {
-            activeWordId = id; document.getElementById('catModal').style.display = 'flex';
-            const list = document.getElementById('catModalList'); list.innerHTML = '';
-            db.categories.forEach((c, i) => {
-                const has = c.wordIds.includes(id);
-                list.innerHTML += `<button onclick="toggleInCat(${i})" style="width:100%; margin-bottom:5px; background:${has?'var(--secondary)':'var(--bg)'}; color:${has?'white':'var(--text)'}; border:1px solid var(--border); padding:10px; border-radius:8px;">${c.name} ${has?'�?:''}</button>`;
-            });
-        }
-        function toggleInCat(i) { const c = db.categories[i]; if(c.wordIds.includes(activeWordId)) c.wordIds = c.wordIds.filter(id => id !== activeWordId); else c.wordIds.push(activeWordId); save(); openCatModal(activeWordId); }
-        function closeCatModal() { document.getElementById('catModal').style.display = 'none'; renderFullList(); }
-        
-        function exportDictionary() { 
-            let name = prompt("שם הקובץ?", "EnglishPractice_Backup"); if(!name) return;
-            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(db)], {type:'application/json'})); a.download = name + '.json'; a.click();
-        }
-        
-        function importDictionary(e) {
-            const reader = new FileReader();
-            reader.onload = (ev) => { try { tempImportData = JSON.parse(ev.target.result); document.getElementById('importModal').style.display = 'flex'; } catch(err) { alert("קובץ לא תקין"); } };
-            if(e.target.files.length > 0) reader.readAsText(e.target.files[0]);
-            e.target.value = '';
-        }
-
-        function executeImport(type) {
-            if(!tempImportData) return;
-            if(type === 'replace') {
-                if(confirm("מחיקת הקיים והחלפה?")) { db = tempImportData; save(); location.reload(); }
-            } else if (type === 'merge') {
-                tempImportData.words.forEach(nw => {
-                    const ex = db.words.find(w => w.en === nw.en);
-                    if(ex) { ex.he = Array.from(new Set([...ex.he, ...nw.he])); } else { db.words.push({...nw, success:0, fail:0}); }
-                });
-                if(tempImportData.categories) {
-                    tempImportData.categories.forEach(nc => {
-                        const ec = db.categories.find(c => c.name === nc.name);
-                        if(ec) ec.wordIds = Array.from(new Set([...ec.wordIds, ...nc.wordIds])); else db.categories.push(nc);
-                    });
-                }
-                save(); location.reload();
-            }
-        }
-        function closeImportModal() { document.getElementById('importModal').style.display = 'none'; tempImportData = null; }
-        function resetAllStats() { if(confirm("לאפס סטטיסטיקה לכל המילים?")) { db.words.forEach(w => { w.success = 0; w.fail = 0; }); save(); renderFullList(); alert("הסטטיסטיקה אופסה."); } }
-        function clearAllData() { if(confirm("למחוק הכל?")) { localStorage.clear(); if(currentUser) { firestore.collection("users").doc(currentUser.uid).delete(); } location.reload(); } }
-        function setQuizMode(m) { quizMode = m; document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.id === 'm-'+m)); setupQuiz(); }
-
-    </script>
-</body>
-</html>
+        function saveSettings
