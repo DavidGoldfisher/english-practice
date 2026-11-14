@@ -446,37 +446,53 @@
             document.getElementById('authOverlay').style.display = 'flex';
         }
 
+        // Initialize UI immediately from local storage so the app never hangs on "Loading..."
+        initializeAppUI();
+
         async function loadCloudData() {
+            if (!currentUser || !firestore) return;
             try {
                 const docRef = firestore.collection("users").doc(currentUser.uid);
                 const docSnap = await docRef.get();
                 
                 if (docSnap.exists) {
                     const cloudDb = docSnap.data();
+                    
+                    // Merge local words with cloud words so newly saved local words are never lost
+                    const mergedWords = [...(cloudDb.words || [])];
+                    if (db.words && db.words.length > 0) {
+                        db.words.forEach(localWord => {
+                            if (!mergedWords.some(cw => cw.en.toLowerCase() === localWord.en.toLowerCase())) {
+                                mergedWords.push(localWord);
+                            }
+                        });
+                    }
+
                     db = {
-                        words: cloudDb.words || [],
-                        categories: cloudDb.categories || [],
-                        theme: cloudDb.theme || 'light',
-                        sortOrder: cloudDb.sortOrder || 'abc',
+                        words: mergedWords,
+                        categories: (cloudDb.categories && cloudDb.categories.length > 0) ? cloudDb.categories : (db.categories || []),
+                        theme: cloudDb.theme || db.theme || 'light',
+                        sortOrder: cloudDb.sortOrder || db.sortOrder || 'abc',
                         autoAdvance: cloudDb.autoAdvance !== undefined ? cloudDb.autoAdvance : true,
                         autoSpeak: cloudDb.autoSpeak !== undefined ? cloudDb.autoSpeak : true,
                         showSpeaker: cloudDb.showSpeaker !== undefined ? cloudDb.showSpeaker : true,
                         newWordLimit: cloudDb.newWordLimit || 3,
-                        history: cloudDb.history || []
+                        history: (cloudDb.history && cloudDb.history.length > 0) ? cloudDb.history : (db.history || [])
                     };
-                    // סנכרון למטה (שמירה ל-localStorage המקומי)
-                    if(storageAvailable) { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
-                } else {
-                    // יוזר חדש - אם יש לו כבר מילים בטלפון/מחשב מקומית, נעלה אותן לענן שלו!
-                    if (db.words && db.words.length > 0) {
-                        await saveToCloud();
-                    } else {
-                        await saveToCloud(); // סתם שומר מבנה ריק ראשוני
+                    
+                    if (storageAvailable) {
+                        localStorage.setItem(DB_KEY, JSON.stringify(db));
                     }
+                    // Update cloud if local had newer words
+                    await saveToCloud();
+                } else {
+                    // First time in cloud for this user - upload existing local data
+                    await saveToCloud();
                 }
                 initializeAppUI();
-            } catch(e) {
-                alert("שגיאה בטעינת נתונים מהענן: " + e.message);
+            } catch (e) {
+                console.error("Cloud load error:", e);
+                // Keep using local data if cloud fails or is offline
                 initializeAppUI();
             }
         }
@@ -782,16 +798,23 @@
                 if(isEn && db.autoSpeak) { speakText(question); }
 
                 let opts = [answer];
-                while(opts.length < 4) {
+                let attempts = 0;
+                // Limit loop to 50 attempts to prevent browser freeze when translations overlap
+                while (opts.length < 4 && attempts < 50) {
+                    attempts++;
                     const r = pool[Math.floor(Math.random() * pool.length)];
                     if (!r || r.id === correctObj.id) continue;
                     if (isEn) {
                         const potentialHe = r.he[0]; 
-                        if(!correctObj.he.some(h => cleanHe(h) === cleanHe(potentialHe)) && !opts.includes(potentialHe)) opts.push(potentialHe);
+                        if (!correctObj.he.some(h => cleanHe(h) === cleanHe(potentialHe)) && !opts.includes(potentialHe)) {
+                            opts.push(potentialHe);
+                        }
                     } else {
                         const potentialEn = r.en;
                         const hasSameHe = r.he.some(h => cleanHe(h) === cleanHe(question));
-                        if(!hasSameHe && !opts.includes(potentialEn)) opts.push(potentialEn);
+                        if (!hasSameHe && !opts.includes(potentialEn)) {
+                            opts.push(potentialEn);
+                        }
                     }
                 }
                 
